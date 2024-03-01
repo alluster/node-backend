@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  node-backend:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - 3000:3000
+    volumes: 
+      - .:/app 
+      - '/app/node-modules'
+    depends_on:
+      - db
+
+  db:
+    restart: always
+    volumes:
+      - ./docker-data/db-data:/var/lib/postgresql/data
+    image: postgres:latest
+    environment:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 5432:5432
+
+  adminer:
+    depends_on:
+      - db
+    image: adminer
+    restart: always
+    ports:
+      - 8090:8080
+    

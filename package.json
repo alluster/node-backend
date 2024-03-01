@@ -1,0 +1,30 @@
+{
+	"name": "hp-backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "NODE_ENV=dev nodemon index.js",
+		"prod": "NODE_ENV=prod node index.js",
+		"migrate": "DEBUG=hpdatabase knex migrate:latest",
+		"rollback": "DEBUG=hpdatabase knex migrate:rollback",
+		"seed": "DEBUG=hpdatabase knex seed:run"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "^16.4.4",
+		"express": "^4.18.2",
+		"helmet": "^7.1.0",
+		"knex": "^3.1.0",
+		"morgan": "^1.10.0",
+		"nodemon": "^3.0.3",
+		"pg": "^8.11.3",
+		"postgres-pool": "^8.1.3",
+		"util": "^0.12.5"
+	},
+	"devDependencies": {
+		"jest": "^29.7.0",
+		"supertest": "^6.3.4"
+	}
+}
