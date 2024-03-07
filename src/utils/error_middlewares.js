@@ -10,7 +10,8 @@ function errorHandler(error, req, res, next) {
 	res.json({
 		status: statusCode,
 		message: error.message,
-		stack: process.env.ENVIRONMENT === 'production' ? 'Stack visible only in development' : error.stack
+		stack: process.env.ENVIRONMENT === 'production' ? 'Stack visible only in development' : error.stack,
+		errors: error.errors || undefined
 	})
 
 }

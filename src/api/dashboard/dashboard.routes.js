@@ -8,13 +8,23 @@ const db = knex(config.development);
 
 router.get('/', async (req, res) => {
 	try {
-		const data = await db.select().table('dashboard');
+		let data;
+		const { id } = req.query;
+		if (id) {
+			data = await db('dashboard').where({ id: id }).first();
+			if (!data) {
+				return res.status(404).json({ error: 'Row not found' });
+			}
+			data = [data]; // Wrap the single record inside an array
+		} else {
+			data = await db.select().table('dashboard');
+		}
 		res.json(data);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
-})
+});
 
 router.post('/', async (req, res) => {
 	const { title, description, id, deleted_at } = req.body;

@@ -8,10 +8,12 @@ const morgan = require('morgan')
 const api = require('./src/api');
 const apiMessage = require('./src/constants/apiMessage');
 const app = express();
+const cors = require('cors');
 
 app.use(helmet());
 app.use(morgan('tiny'));
 app.use(express.json())
+app.use(cors());
 
 app.get('/', (req, res) => {
 	res.json({ message: apiMessage.message })

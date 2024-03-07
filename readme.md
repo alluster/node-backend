@@ -1,8 +1,8 @@
-# Docker Node.js + PostgreSQL backend with Adminer database viewer
+# Docker Node.js + PostgreSQL Backend with Adminer database viewer
 
 1. Create .env file and add variables according to .env.example
 
-2. Run the docker-composer:
+2. Run the docker-composer in your project root terminal:
 
 $ docker-compose up
 
