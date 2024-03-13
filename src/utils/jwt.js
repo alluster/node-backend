@@ -10,5 +10,12 @@ const sign = (payload) => {
 		})
 	})
 }
-
-module.exports = { sign }
+function verify(token) {
+	return new Promise((resolve, reject) => {
+		jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+			if (error) return reject(error);
+			return resolve(decoded);
+		});
+	});
+}
+module.exports = { sign, verify }

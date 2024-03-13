@@ -111,13 +111,13 @@ router.post('/signin', async (req, res) => {
 		const token = await jwt.sign(payload)
 
 		delete user.password
-		res.json({
-			message: 'User logged in',
+		res.json([{
+			message: 'success',
 			user: user,
 			token: token
-		});
+		}]);
 	} catch (error) {
-		res.status(400).json({ error: error.message });
+		res.status(400).json([{ message: 'Signin failed' }]);
 	}
 });
 
