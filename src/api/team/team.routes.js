@@ -11,13 +11,13 @@ router.get('/', async (req, res) => {
 		let data;
 		const { id } = req.query;
 		if (id) {
-			data = await db('dashboard').where({ id: id }).first();
+			data = await db('team').where({ id: id }).first();
 			if (!data) {
 				return res.status(404).json({ error: 'Row not found' });
 			}
 			data = [data]; // Wrap the single record inside an array
 		} else {
-			data = await db.select().table('dashboard');
+			data = await db.select().table('team');
 		}
 		res.json(data);
 	} catch (error) {
@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 	const { title, description, id, deleted_at } = req.body;
 	try {
 		if (id) {
-			const updatedRowsCount = await db('dashboard')
+			const updatedRowsCount = await db('team')
 				.where({ id: id })
 				.update({
 					title: title,
@@ -40,14 +40,14 @@ router.post('/', async (req, res) => {
 				});
 
 			if (updatedRowsCount === 0) {
-				return res.status(404).json({ error: 'Dashboard record not found' });
+				return res.status(404).json({ error: 'Team record not found' });
 			}
-			res.json({ message: 'Dashboard record updated successfully' });
+			res.json({ message: 'Team record updated successfully' });
 		} else {
-			const insertedIds = await db('dashboard')
+			const insertedIds = await db('team')
 				.insert({ title: title, description: description });
 
-			res.json({ id: insertedIds[0], message: 'Dashboard record created successfully' });
+			res.json({ id: insertedIds[0], message: 'Team record created successfully' });
 		}
 	} catch (error) {
 		console.error(error);

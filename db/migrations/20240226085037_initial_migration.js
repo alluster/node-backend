@@ -61,6 +61,7 @@ exports.up = async (knex) => {
 		table.string('sheet_id');
 		table.string('spreadsheet_id');
 		table.string('cell');
+		table.string('value');
 	});
 
 	await knex.schema.createTable(tableNames.dashboard_public, (table) => {

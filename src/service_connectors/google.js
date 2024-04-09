@@ -4,6 +4,7 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { promisify } = require("es6-promisify");
 
 const google = async ({ spreadsheetId, sheetId, cell }) => {
+	console.log(spreadsheetId, sheetId, cell)
 	const doc = new GoogleSpreadsheet(`${spreadsheetId}`);
 	const Cert = process.env.GOOGLE_CERT;
 	const ParsedCert = JSON.parse(Cert);
@@ -12,37 +13,16 @@ const google = async ({ spreadsheetId, sheetId, cell }) => {
 		private_key: ParsedCert.private_key,
 	});
 
-
 	await doc.loadInfo(); // loads document properties and worksheets
 	const sheet = doc.sheetsById[`${sheetId}`]; // or use doc.sheetsById[id]
 	await sheet.loadCells()
-	const cellValue = sheet.getCellByA1(`${cell}`); // or A1 style notation
-
-	if (!cell) {
-		return (
-			[
-				{
-					"sheet": sheet._cells.map((row, rowIndex) => {
-						return row.map((cell, columnIndex) => {
-							return {
-								value: cell.value,
-								row: rowIndex,
-								column: columnIndex
-							};
-						});
-					})
-				}
-			]
-		)
-	}
-	else {
-		return (
-			[
-				{ "value": `${cellValue.value}` }
-			]
-		)
-	}
-
+	const c6 = sheet.getCellByA1(`${cell}`); // or A1 style notation
+	return (
+		c6.value || 'No value recieved'
+	)
 }
+
+
+
 
 module.exports = google;
