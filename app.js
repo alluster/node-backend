@@ -9,9 +9,9 @@ const api = require('./src/api');
 const apiMessage = require('./src/constants/apiMessage');
 const cors = require('cors');
 const authMiddlewares = require('./src/api/auth/auth.middlewares');
+const { GoogleAnalytics } = require('./src/service_connectors/google');
 
 const app = express();
-
 app.use(helmet());
 app.use(morgan('tiny'));
 app.use(express.json())

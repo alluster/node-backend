@@ -11,13 +11,13 @@ router.get('/', async (req, res) => {
 		let data;
 		const { id } = req.query;
 		if (id) {
-			data = await db('team').where({ id: id }).first();
+			data = await db('team').where({ id: id }).whereNull('deleted_at').first();
 			if (!data) {
 				return res.status(404).json({ error: 'Row not found' });
 			}
 			data = [data]; // Wrap the single record inside an array
 		} else {
-			data = await db.select().table('team');
+			data = await db.select().whereNull('deleted_at').table('team');
 		}
 		res.json(data);
 	} catch (error) {
