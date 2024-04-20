@@ -5,8 +5,35 @@ const { promisify } = require("es6-promisify");
 const { auth } = require('google-auth-library');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
+const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
+	const doc = new GoogleSpreadsheet(spreadsheetId);
+	const Cert = process.env.GOOGLE_CERT;
+	const ParsedCert = JSON.parse(Cert);
 
-const GoogleSheet = async ({ spreadsheetId, sheetId, cell }) => {
+	await doc.useServiceAccountAuth({
+		client_email: ParsedCert.client_email,
+		private_key: ParsedCert.private_key,
+	});
+
+	await doc.loadInfo(); // loads document properties and worksheets
+	const sheet = doc.sheetsById[sheetId]; // or use doc.sheetsById[id]
+	await sheet.loadCells();
+
+	// Extract cell values into JSON format
+	const jsonData = [];
+	for (let rowIndex = 0; rowIndex < sheet.rowCount; rowIndex++) {
+		const row = {};
+		for (let colIndex = 0; colIndex < sheet.columnCount; colIndex++) {
+			const cell = sheet.getCell(rowIndex, colIndex);
+			row[`Column ${colIndex + 1}`] = cell.value;
+		}
+		jsonData.push(row);
+	}
+
+	return jsonData;
+}
+
+const GoogleSheetDataPoint = async ({ spreadsheetId, sheetId, cell }) => {
 	const doc = new GoogleSpreadsheet(`${spreadsheetId}`);
 	const Cert = process.env.GOOGLE_CERT;
 	const ParsedCert = JSON.parse(Cert);
@@ -73,5 +100,6 @@ const GoogleAnalytics = async ({
 
 module.exports = {
 	GoogleSheet,
+	GoogleSheetDataPoint,
 	GoogleAnalytics
 };

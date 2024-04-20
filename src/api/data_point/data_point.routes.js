@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 		}
 		const GetGoogleSheetValue = async ({ spreadsheet_id, sheet_id, cell }) => {
 			try {
-				const response = await google.GoogleSheet({
+				const response = await google.GoogleSheetDataPoint({
 					spreadsheetId: spreadsheet_id,
 					sheetId: sheet_id,
 					cell: cell

@@ -7,6 +7,8 @@ const db = knex(config.development);
 const yup = require('yup');
 const bcrypt = require('bcrypt');
 const jwt = require('../../utils/jwt');
+const { v4: uuidv4 } = require('uuid'); // Import the UUID module
+
 const schema = yup.object().shape({
 	first_name: yup.string().trim().min(2).required(),
 	last_name: yup.string().trim().min(2).required(),
@@ -49,7 +51,7 @@ router.post('/signup', async (req, res) => {
 	const { first_name, last_name, email, password } = req.body;
 	try {
 		const hashedPassword = await bcrypt.hash(password, 12)
-
+		const generatedUserId = uuidv4(); // Generate a UUID for the user
 		const existingUser = await db('user').where({ email }).first();
 		if (existingUser) {
 			throw new Error('Email is already in use');
@@ -58,7 +60,7 @@ router.post('/signup', async (req, res) => {
 		const validUser = await schema.validate({ first_name, last_name, email, password }, {
 			abortEarly: false
 		});
-		const newUser = await db('user').insert({ first_name, last_name, email, password: hashedPassword }).returning('id');
+		const newUser = await db('user').insert({ uniq_user_id: generatedUserId, first_name, last_name, email, password: hashedPassword }).returning('id');
 		const createdUser = await db('user').where({ id: newUser[0].id }).first();
 
 		delete createdUser.password
@@ -90,7 +92,7 @@ router.post('/signin', async (req, res) => {
 			abortEarly: false
 		});
 
-		const user = await db('user').where({ email }).first().returning('id', 'email', 'password', 'first_name', 'last_name');
+		const user = await db('user').where({ email }).first().returning('id', 'email', 'password', 'first_name', 'last_name', 'team_id');
 		if (!user) {
 			const error = new Error('User not found');
 			res.status(401)
@@ -106,7 +108,8 @@ router.post('/signin', async (req, res) => {
 			id: user.id,
 			first_name: user.first_name,
 			last_name: user.last_name,
-			email: user.email
+			email: user.email,
+			team_id: user.team_id
 		}
 		const token = await jwt.sign(payload)
 

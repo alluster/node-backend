@@ -3,24 +3,24 @@ const router = express.Router();
 const knex = require('knex');
 const config = require('../../../knexfile');
 const db = knex(config.development);
-const yup = require('yup');
-
-const schemaUpdateUser = yup.object().shape({
-	team_id: yup.number().integer().positive().required(),
-});
 
 router.get('/', async (req, res) => {
 	try {
 		let data;
 		const { id } = req.query;
 		if (id) {
-			data = await db('user').where({ id: id }).first();
+			data = await db('user')
+				.where({ id: id })
+				.whereNull('deleted_at')
+
+				.first();
 			if (!data) {
 				return res.status(404).json({ error: 'Row not found' });
 			}
-			data = [data]; // Wrap the single record inside an array
+			data = [data];
+			delete data[0].password
 		} else {
-			data = await db.select().table('user');
+			res.status(500).json({ error: 'Internal Server Error' });
 		}
 		res.json(data);
 	} catch (error) {
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-	const { first_name, last_name, id, deleted_at } = req.body;
+	const { first_name, last_name, id, team_id, deleted_at } = req.body;
 	try {
 		if (id) {
 			const updatedRowsCount = await db('user')
@@ -38,6 +38,7 @@ router.post('/', async (req, res) => {
 				.update({
 					first_name: first_name,
 					last_name: last_name,
+					team_id: team_id,
 					deleted_at: deleted_at ? new Date() : null,
 					updated_at: new Date()
 				});
@@ -45,10 +46,16 @@ router.post('/', async (req, res) => {
 			if (updatedRowsCount === 0) {
 				return res.status(404).json({ error: 'User record not found' });
 			}
-			res.json({ message: 'User record updated successfully' });
-		} else {
 
-			res.json({ message: 'User ID required' });
+			// Fetch the updated user data from the database
+			const updatedUser = await db('user')
+				.where({ id: id })
+				.first();
+			delete updatedUser.password
+			res.status(200).json({ status: 'success', message: 'User record updated successfully', user: updatedUser });
+
+		} else {
+			res.status(400).json({ error: 'User ID required' });
 		}
 	} catch (error) {
 		console.error(error);
