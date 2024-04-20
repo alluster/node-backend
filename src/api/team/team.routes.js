@@ -9,18 +9,33 @@ const db = knex(config.development);
 
 router.get('/', async (req, res) => {
 	try {
-		let data;
-		const { id } = req.query;
+		const { id, user_id } = req.query;
+
 		if (id) {
-			data = await db('team').where({ id: id }).whereNull('deleted_at').first();
-			if (!data) {
-				return res.status(404).json({ error: 'Row not found' });
+			// If team ID is provided, return the team details
+			const team = await db('team')
+				.where({ id: id })
+				.whereNull('deleted_at')
+				.first();
+
+			if (!team) {
+				return res.status(404).json({ error: 'Team not found' });
 			}
-			data = [data]; // Wrap the single record inside an array
+			data = [team]
+			res.json(data);
+		} else if (!user_id) {
+			// If neither team ID nor user ID is provided, return an error
+			return res.status(400).json({ error: 'User ID is required' });
 		} else {
-			data = await db.select().whereNull('deleted_at').table('team');
+			// If user ID is provided, return teams that the user belongs to
+			const teams = await db('team')
+				.join('team_users', 'team.id', '=', 'team_users.team_id')
+				.where({ 'team_users.user_id': user_id })
+				.whereNull('team.deleted_at')
+				.select('team.*');
+
+			res.json(teams);
 		}
-		res.json(data);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -30,6 +45,10 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
 	const { title, description, id, deleted_at, uniq_user_id } = req.body;
 	try {
+		if (!uniq_user_id) {
+			return res.status(400).json({ error: 'uniq_user_id is required' });
+		}
+
 		if (id) {
 			const updatedRowsCount = await db('team')
 				.where({ id: id })
@@ -45,25 +64,17 @@ router.post('/', async (req, res) => {
 			}
 			res.json({ message: 'Team record updated successfully' });
 		} else {
-			const generated_uniq_id = await uuidv4(); // Generate a UUID for the team record
-
-			// Insert the team record
+			const generated_uniq_id = uuidv4();
 			const insertedIds = await db('team').insert({ uniq_team_id: generated_uniq_id, title: title, description: description }).returning('id');
-			const teamId = insertedIds[0];
-
-			// If a unique user ID is provided, add the user to the team
-			if (uniq_user_id) {
-				// Check if the user exists
-				const userExists = await db('users').where({ uniq_user_id: uniq_user_id }).first();
-				if (userExists) {
-					// Add the user to the team's array of users
-					await db('team_users').insert({ team_id: teamId, user_id: userExists.id });
-				} else {
-					return res.status(404).json({ error: 'User not found' });
-				}
+			const teamId = insertedIds[0].id;
+			const userExists = await db('user').where({ uniq_user_id: uniq_user_id }).first();
+			if (userExists) {
+				await db('team_users').insert({ team_id: teamId, user_id: userExists.id });
+			} else {
+				return res.status(404).json({ error: 'User not found' });
 			}
 
-			res.json({ id: teamId, message: 'Team record created successfully' });
+			res.json({ insertedIds, message: 'Team record created successfully' });
 		}
 	} catch (error) {
 		console.error(error);

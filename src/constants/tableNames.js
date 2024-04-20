@@ -5,5 +5,6 @@ module.exports = {
 	dashboard_public: 'dashboard_public',
 	data_provider: 'data_provider',
 	team: 'team',
-	data_table: 'data_table'
+	data_table: 'data_table',
+	team_users: 'team_users'
 }; 
