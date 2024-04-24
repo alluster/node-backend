@@ -1,7 +1,7 @@
-const app = require('./app');
-const logger = require('./src/utils/logger');
+import app from './app.js';
+import { info } from './src/utils/logger.js';
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-	logger.info(`Listening at http://localhost:${port}`);
+	info(`Listening at http://localhost:${port}`);
 });

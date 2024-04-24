@@ -1,31 +1,61 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
+import knex from 'knex';
+import { config } from '../../../knexfile.js';
 const db = knex(config.development);
 
 router.get('/', async (req, res) => {
 	try {
-		let data;
-		const { id } = req.query;
+		const { id, email } = req.query;
 		if (id) {
-			data = await db('user')
+			// Fetch user data
+			let data = await db('user')
 				.where({ id: id })
 				.whereNull('deleted_at')
-
 				.first();
+
 			if (!data) {
-				return res.status(404).json({ error: 'Row not found' });
+				return res.status(404).json({ error: 'User not found' });
 			}
-			data = [data];
-			delete data[0].password
+
+			// Remove sensitive information like password
+			delete data.password;
+
+			// Initialize team property as an empty array
+			data.team = [];
+
+			// If the user has a team_id, fetch team data and add it to the user object
+			if (data.team_id) {
+				const teamData = await db('team')
+					.where({ id: data.team_id })
+					.whereNull('deleted_at')
+					.first();
+
+				// Set team data if found
+				if (teamData) {
+					data.team = [teamData];
+				}
+			}
+
+			// Fetch user invitations matching the user's email
+			const userInvitations = await db('invitations')
+				.join('team', 'invitations.team_id', '=', 'team.id')
+				.where({ 'invitations.email': data.email })
+				.whereNull('team.deleted_at')
+				.whereNull('invitations.deleted_at') // Exclude invitations with deleted_at not null
+				.select('invitations.*');
+
+			// Add invitations array to user object
+			data.invitations = userInvitations || [];
+
+			// Send the modified user object with team data and invitations
+			return res.json([data]);
 		} else {
-			res.status(500).json({ error: 'Internal Server Error' });
+			return res.status(400).json({ error: 'Missing user ID' });
 		}
-		res.json(data);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: 'Internal Server Error' });
+		return res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
 
@@ -63,4 +93,4 @@ router.post('/', async (req, res) => {
 	}
 });
 
-module.exports = router;
+export default router;

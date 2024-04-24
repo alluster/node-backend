@@ -1,18 +1,18 @@
-const express = require('express');
+import express from 'express';
+import knex from 'knex';
+import { config } from '../../../knexfile.js';
+import { GoogleSheet } from '../../service_connectors/google.js';
 
-const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
-const google = require('../../service_connectors/google');
 const db = knex(config.development);
+const router = express.Router();
 
 
 router.get('/', async (req, res) => {
 	try {
 		let data;
-		const { id, dashboard_id } = req.query;
+		const { id, dashboard_id, get_data } = req.query;
 		if (id) {
-			data = await db('data_table').where({ id: id }).whereNull('deleted_at').first();
+			data = await db('data_table'.where({ id: id }).whereNull('deleted_at').first())
 			if (!data) {
 				return res.status(404).json({ error: 'Row not found' });
 			}
@@ -20,15 +20,15 @@ router.get('/', async (req, res) => {
 		} else if (dashboard_id) {
 			data = await db('data_table').where({ dashboard_id: dashboard_id }).whereNull('deleted_at');
 			if (!data || data.length === 0) {
-				return res.status(404).json({ error: 'Data not found' });
+				return res.status(404).json({ status: 404, error: 'Data not found' });
 			}
-
 		} else {
 			data = await db.select().table('data_table').whereNull('deleted_at');
 		}
+
 		const GetGoogleSheet = async ({ spreadsheet_id, sheet_id }) => {
 			try {
-				const response = await google.GoogleSheet({
+				const response = await GoogleSheet({
 					spreadsheetId: spreadsheet_id,
 					sheetId: sheet_id,
 				});
@@ -55,8 +55,11 @@ router.get('/', async (req, res) => {
 			}
 		};
 
-		await AddDataToData();
-		res.json(data);
+		if (get_data) {
+			await AddDataToData();
+		}
+
+		res.status(200).json(data);
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
@@ -99,4 +102,4 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-module.exports = router;
+export default router;

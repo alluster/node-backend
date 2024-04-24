@@ -1,6 +1,7 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-module.exports = {
+export const config = {
 	development: {
 		client: 'pg',
 		debug: true,
@@ -22,3 +23,5 @@ module.exports = {
 		},
 	}
 };
+
+export default config

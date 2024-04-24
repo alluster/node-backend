@@ -1,23 +1,28 @@
-const express = require('express');
+import express from 'express';
+import knex from 'knex';
+import config from '../../../knexfile.js';
 
-const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
 const db = knex(config.development);
 
+const router = express.Router();
 
 router.get('/', async (req, res) => {
 	try {
 		let data;
-		const { id } = req.query;
+		const { id, uniq_team_id } = req.query;
 		if (id) {
-			data = await db('dashboard').where({ id: id }).whereNull('deleted_at').first();
+			data = await db('dashboard')
+				.where({ id: id, uniq_team_id: uniq_team_id })
+				.whereNull('deleted_at')
+				.first();
 			if (!data) {
 				return res.status(404).json({ error: 'Row not found' });
 			}
 			data = [data]; // Wrap the single record inside an array
 		} else {
-			data = await db('dashboard').whereNull('deleted_at');
+			data = await db('dashboard')
+				.where({ uniq_team_id: uniq_team_id })
+				.whereNull('deleted_at');
 		}
 		res.json(data);
 	} catch (error) {
@@ -27,7 +32,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-	const { title, description, id, deleted_at } = req.body;
+	const { title, description, id, deleted_at, uniq_team_id } = req.body;
 	try {
 		if (id) {
 			const updatedRowsCount = await db('dashboard')
@@ -36,7 +41,7 @@ router.post('/', async (req, res) => {
 					title: title,
 					description: description,
 					deleted_at: deleted_at ? new Date() : null,
-					updated_at: new Date()
+					updated_at: new Date(),
 				});
 
 			if (updatedRowsCount === 0) {
@@ -45,7 +50,9 @@ router.post('/', async (req, res) => {
 			res.json({ message: 'Dashboard record updated successfully' });
 		} else {
 			const insertedIds = await db('dashboard')
-				.insert({ title: title, description: description });
+				.insert({
+					title: title, description: description, uniq_team_id: uniq_team_id
+				});
 
 			res.json({ id: insertedIds[0], message: 'Dashboard record created successfully' });
 		}
@@ -54,4 +61,5 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-module.exports = router;
+
+export default router;

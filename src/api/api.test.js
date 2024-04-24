@@ -1,7 +1,5 @@
-const supertest = require('supertest');
-
-const app = require('../../app');
-const apiMessage = ('./constants/apiMessage');
+import supertest from 'supertest';
+import app from '../../app.js';
 
 describe('GET /api/v1', () => {
 	test('should return an message ', async () => {

@@ -1,13 +1,13 @@
-const express = require('express');
+import express from 'express';
 
 const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
+import knex from 'knex';
+import { config } from '../../../knexfile.js';
 const db = knex(config.development);
-const yup = require('yup');
-const bcrypt = require('bcrypt');
-const jwt = require('../../utils/jwt');
-const { v4: uuidv4 } = require('uuid'); // Import the UUID module
+import yup from 'yup';
+import bcrypt from 'bcrypt';
+import { sign } from '../../utils/jwt.js';
+import { v4 as uuidv4 } from 'uuid'; // Import the UUID module
 
 const schema = yup.object().shape({
 	first_name: yup.string().trim().min(2).required(),
@@ -70,7 +70,7 @@ router.post('/signup', async (req, res) => {
 			last_name,
 			email
 		}
-		const token = await jwt.sign(payload)
+		const token = await sign(payload)
 		res.json({
 			message: 'User created',
 			user: createdUser,
@@ -111,7 +111,7 @@ router.post('/signin', async (req, res) => {
 			email: user.email,
 			team_id: user.team_id
 		}
-		const token = await jwt.sign(payload)
+		const token = await sign(payload)
 
 		delete user.password
 		res.json([{
@@ -126,4 +126,4 @@ router.post('/signin', async (req, res) => {
 
 
 
-module.exports = router;
+export default router;

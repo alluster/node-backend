@@ -19,16 +19,14 @@ function references(table, tableName) {
  */
 exports.up = async (knex) => {
 	await Promise.all([
-		await knex.schema.createTable(tableNames.data_table, (table) => {
+		await knex.schema.createTable(tableNames.invitations, (table) => {
 			table.increments().notNullable();
 			addTitleColumns(table)
 			addDefaultColumns(table);
 			references(table, 'user')
-			references(table, 'dashboard')
-			references(table, 'data_provider')
+			references(table, 'team')
 			table.string('sheet_id');
-			table.string('spreadsheet_id');
-			table.string('data_content');
+			table.string('email');
 		})
 	])
 };
@@ -39,6 +37,6 @@ exports.up = async (knex) => {
  */
 exports.down = async (knex) => {
 	await Promise.all([
-		tableNames.data_table,
+		tableNames.invitations,
 	].map((tableName) => knex.schema.dropTableIfExists(tableName)))
 };

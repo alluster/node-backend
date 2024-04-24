@@ -1,11 +1,9 @@
-require('dotenv').config()
-const express = require('express');
-const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { promisify } = require("es6-promisify");
-const { auth } = require('google-auth-library');
-const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+import dotenv from 'dotenv'; dotenv.config();
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { auth } from 'google-auth-library';
+import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
-const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
+export const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
 	const doc = new GoogleSpreadsheet(spreadsheetId);
 	const Cert = process.env.GOOGLE_CERT;
 	const ParsedCert = JSON.parse(Cert);
@@ -24,8 +22,9 @@ const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
 	for (let rowIndex = 0; rowIndex < sheet.rowCount; rowIndex++) {
 		const row = {};
 		for (let colIndex = 0; colIndex < sheet.columnCount; colIndex++) {
+			const columnName = String.fromCharCode(65 + colIndex); // Convert 0-based index to uppercase alphabet (A, B, C, ...)
 			const cell = sheet.getCell(rowIndex, colIndex);
-			row[`Column ${colIndex + 1}`] = cell.value;
+			row[columnName] = cell.value;
 		}
 		jsonData.push(row);
 	}
@@ -33,7 +32,7 @@ const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
 	return jsonData;
 }
 
-const GoogleSheetDataPoint = async ({ spreadsheetId, sheetId, cell }) => {
+export const GoogleSheetDataPoint = async ({ spreadsheetId, sheetId, cell }) => {
 	const doc = new GoogleSpreadsheet(`${spreadsheetId}`);
 	const Cert = process.env.GOOGLE_CERT;
 	const ParsedCert = JSON.parse(Cert);
@@ -51,7 +50,7 @@ const GoogleSheetDataPoint = async ({ spreadsheetId, sheetId, cell }) => {
 	)
 }
 
-const GoogleAnalytics = async ({
+export const GoogleAnalytics = async ({
 	propertyId
 }) => {
 	try {
@@ -96,10 +95,4 @@ const GoogleAnalytics = async ({
 		console.log(err);
 		throw new Error('Failed to connect and run report');
 	}
-};
-
-module.exports = {
-	GoogleSheet,
-	GoogleSheetDataPoint,
-	GoogleAnalytics
 };

@@ -1,7 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { spawn } = require('child_process');
-const { AskLlama2 } = require('../../service_connectors/llama2');
+import { AskLlama2 } from '../../service_connectors/llama2.js';
 
 router.post('/', async (req, res) => {
 	try {
@@ -23,4 +22,4 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
+import knex from 'knex';
+import { config } from '../../../knexfile.js';
 
 const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
 const db = knex(config.development);
 
 
@@ -56,4 +56,4 @@ router.post('/', async (req, res) => {
 	}
 });
 
-module.exports = router;
+export default router;

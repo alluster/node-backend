@@ -1,7 +1,7 @@
-const supertest = require('supertest');
+import supertest from 'supertest';
 
-const app = require('./app');
-const apiMessage = require('./src/constants/apiMessage')
+import app from './app';
+import { message } from './src/constants/apiMessage.js';
 
 describe('App', () => {
 	test('should response to a message', async () => {
@@ -10,6 +10,6 @@ describe('App', () => {
 			.expect('Content-Type', /json/)
 			.expect(200);
 
-		expect(response.body.message).toEqual(apiMessage.message)
+		expect(response.body.message).toEqual(message)
 	})
 });

@@ -1,35 +1,30 @@
 
-const express = require('express');
-const dotenv = require('dotenv'); dotenv.config();
-const error_middlewares = require('./src/utils/error_middlewares');
-const pool = require('./src/utils/pool');
-const helmet = require('helmet');
-const morgan = require('morgan')
-const api = require('./src/api');
-const apiMessage = require('./src/constants/apiMessage');
-const cors = require('cors');
-const authMiddlewares = require('./src/api/auth/auth.middlewares');
-const { GoogleAnalytics } = require('./src/service_connectors/google');
+import express from 'express';
+import dotenv from 'dotenv'; dotenv.config();
+import { notFound, errorHandler } from './src/utils/error_middlewares.js';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import api from './src/api/index.js';
+import { message } from './src/constants/apiMessage.js';
+import cors from 'cors';
+import { validateUser } from './src/api/auth/auth.middlewares.js';
+
 
 const app = express();
 app.use(helmet());
 app.use(morgan('tiny'));
 app.use(express.json())
 app.use(cors());
-app.use(authMiddlewares.validateUser)
+app.use(validateUser)
 
 app.get('/', (req, res) => {
-	res.json({ message: apiMessage.message })
+	res.json({ message: message })
 })
 
 app.use('/api/v1', api);
 
-app.use(error_middlewares.notFound);
-app.use(error_middlewares.errorHandler);
+app.use(notFound);
+app.use(errorHandler);
 
 
-
-
-
-
-module.exports = app;
+export default app;

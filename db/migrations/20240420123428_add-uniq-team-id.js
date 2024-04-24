@@ -1,4 +1,4 @@
-const tableNames = require('../../src/constants/tableNames')
+const tableNames from '../../src/constants/tableNames')
 
 
 /**

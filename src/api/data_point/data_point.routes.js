@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
+import knex from 'knex';
+import { config } from '../../../knexfile.js';
+import { GoogleAnalytics, GoogleSheetDataPoint } from '../../service_connectors/google.js';
 
-const router = express.Router();
-const knex = require('knex');
-const config = require('../../../knexfile');
-const google = require('../../service_connectors/google');
 const db = knex(config.development);
+const router = express.Router();
 
 
 router.get('/', async (req, res) => {
@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 		}
 		const GetGoogleSheetValue = async ({ spreadsheet_id, sheet_id, cell }) => {
 			try {
-				const response = await google.GoogleSheetDataPoint({
+				const response = await GoogleSheetDataPoint({
 					spreadsheetId: spreadsheet_id,
 					sheetId: sheet_id,
 					cell: cell
@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 		};
 		const GetGoogleAnalyticsValue = async ({ propertyId }) => {
 			try {
-				const response = await google.GoogleAnalytics({
+				const response = await GoogleAnalytics({
 					propertyId: propertyId
 				});
 				// console.log('Response from google', response)
@@ -101,7 +101,7 @@ router.get('/', async (req, res) => {
 });
 router.get('/google_analytics', async (req, res) => {
 	try {
-		const analyticsData = await google.GoogleAnalytics()
+		const analyticsData = await GoogleAnalytics()
 		res.json(analyticsData)
 		console.log(analyticsData)
 	} catch (error) {
@@ -150,4 +150,4 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-module.exports = router;
+export default router;

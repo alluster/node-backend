@@ -1,6 +1,6 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const AskLlama2 = async ({ model, prompt, system, stream, options }) => {
+export const AskLlama2 = async ({ model, prompt, system, stream, options }) => {
 	try {
 		const axiosResponse = await axios.post('http://127.0.0.1:11434/api/generate', {
 			model,
@@ -18,6 +18,3 @@ const AskLlama2 = async ({ model, prompt, system, stream, options }) => {
 	}
 };
 
-module.exports = {
-	AskLlama2
-};

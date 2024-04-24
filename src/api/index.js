@@ -1,37 +1,43 @@
-const express = require('express');
-const apiMessage = require('../constants/apiMessage');
-const dashboard = require('./dashboard/dashboard.routes');
-const google = require('./google/google.routes');
-const data_provider = require('./data_provider/data_provider.routes');
-const auth = require('./auth/auth.routes');
-const data_point = require('./data_point/data_point.routes');
-const team = require('./team/team.routes');
-const user = require('./user/user.routes');
-const data_table = require('./data_table/data_table.routes');
+import express from 'express';
+import { message } from '../constants/apiMessage.js';
+import dashboard from './dashboard/dashboard.routes.js';
+import data_provider from './data_provider/data_provider.routes.js';
+import auth from './auth/auth.routes.js';
+import data_point from './data_point/data_point.routes.js';
+import team from './team/team.routes.js';
+import user from './user/user.routes.js';
+import data_table from './data_table/data_table.routes.js';
+import { isLoggedIn, validateTeamAssociation } from '../api/auth/auth.middlewares.js';
+import llama2 from './llama2/llama2.routes.js';
+import invite from './invite/invite.routes.js';
+import chatgpt from './chatgpt/chatgpt.routes.js';
+
+
 const router = express.Router();
-const authMiddlewares = require('../api/auth/auth.middlewares');
-const llama2 = require('./llama2/llama2.routes');
 
 router.get('/', (req, res) => {
 	res.json({
-		message: apiMessage.message
+		message: message
 	});
 });
-router.get('/validateuser', authMiddlewares.isLoggedIn, (req, res) => {
+
+router.get('/validateuser', isLoggedIn, (req, res) => {
 	const user = req.user;
 	res.json({ user });
 });
 
 router.use('/auth', auth);
 
-router.use('/dashboard', authMiddlewares.isLoggedIn, dashboard);
-router.use('/google', authMiddlewares.isLoggedIn, google);
-router.use('/data_provider', authMiddlewares.isLoggedIn, data_provider);
-router.use('/data_point', authMiddlewares.isLoggedIn, data_point);
-router.use('/data_table', authMiddlewares.isLoggedIn, data_table);
-router.use('/team', authMiddlewares.isLoggedIn, team);
-router.use('/user', authMiddlewares.isLoggedIn, user);
-router.use('/llama2', authMiddlewares.isLoggedIn, llama2);
+router.use('/dashboard', isLoggedIn, validateTeamAssociation, dashboard);
+router.use('/data_point', isLoggedIn, validateTeamAssociation, data_point);
+router.use('/data_table', isLoggedIn, validateTeamAssociation, data_table);
+router.use('/llama2', isLoggedIn, validateTeamAssociation, llama2);
+router.use('/chatgpt', isLoggedIn, chatgpt);
+
+router.use('/data_provider', isLoggedIn, data_provider);
+router.use('/invite', isLoggedIn, invite);
+router.use('/team', isLoggedIn, team);
+router.use('/user', isLoggedIn, user);
 
 
-module.exports = router;
+export default router;

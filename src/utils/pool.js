@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 const pool = new Pool({
 	host: process.env.POSTGRES_HOST,
 	port: 5432,
@@ -7,4 +7,4 @@ const pool = new Pool({
 	password: process.env.POSTGRES_PASSWORD,
 })
 
-module.exports = pool
+export default pool
