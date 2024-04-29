@@ -47,14 +47,14 @@ router.post('/', async (req, res) => {
 			if (updatedRowsCount === 0) {
 				return res.status(404).json({ error: 'Dashboard record not found' });
 			}
-			res.json({ message: 'Dashboard record updated successfully' });
+			res.status(200).json({ message: 'Dashboard record updated successfully' });
 		} else {
 			const insertedIds = await db('dashboard')
 				.insert({
 					title: title, description: description, uniq_team_id: uniq_team_id
 				});
 
-			res.json({ id: insertedIds[0], message: 'Dashboard record created successfully' });
+			res.status(200).json({ id: insertedIds[0], message: 'Dashboard record created successfully' });
 		}
 	} catch (error) {
 		console.error(error);

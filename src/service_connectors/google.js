@@ -28,7 +28,6 @@ export const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
 		}
 		jsonData.push(row);
 	}
-
 	return jsonData;
 }
 

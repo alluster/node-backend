@@ -8,9 +8,7 @@ const router = express.Router();
 const db = knex(config.development);
 
 const schema = yup.object().shape({
-	email: yup.string().trim().email().required(),
-	uniq_team_id: yup.string().trim().required(),
-	uniq_user_id: yup.string().trim().required(),
+	email: yup.string().trim().email()
 });
 
 router.get('/', async (req, res) => {
@@ -34,7 +32,7 @@ router.get('/', async (req, res) => {
 			invitation = [invitation];
 			invitation[0].team = invitation[0].team ? [invitation[0].team] : [];
 
-			res.json(invitation);
+			res.status(200).json(invitation);
 		} else if (email) {
 			// If email is provided, return all invitations associated with that email
 			let invitations = await db('invitations')
@@ -53,7 +51,7 @@ router.get('/', async (req, res) => {
 				return res.json([]);
 			}
 
-			res.json(invitations);
+			res.status(200).json(invitations);
 		} else {
 			// If neither invitation ID nor email is provided, return an error
 			return res.status(400).json({ error: 'Invitation ID or email is required' });
@@ -68,10 +66,10 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
 	try {
-		const { email, uniq_team_id, uniq_user_id } = req.body;
+		const { email, uniq_team_id, uniq_user_id, title, description, deleted_at, id } = req.body;
 
 		// Validate request body using Yup schema
-		await schema.validate({ email, uniq_team_id, uniq_user_id });
+		await schema.validate({ email });
 
 		// Check if the user exists
 		const userExists = await db('user').where({ uniq_user_id }).first();
@@ -85,11 +83,19 @@ router.post('/', async (req, res) => {
 			return res.status(404).json({ error: 'Team not found' });
 		}
 
-		// Create the invitation
-		const insertedIds = await db('invitations').insert({ email, team_id: teamExists.id, user_id: userExists.id }).returning('id');
-		const invitationId = insertedIds[0];
+		// Check if the invitation already exists
+		const existingInvitation = await db('invitations').where({ team_id: teamExists.id, user_id: userExists.id }).first();
+		if (!existingInvitation) {
+			// If the invitation does not exist, create a new one
+			const insertedIds = await db('invitations').insert({ email: email, team_id: teamExists.id, user_id: userExists.id, title: title, description: description }).returning('id');
+			const invitationId = insertedIds[0];
+			return res.status(200).json({ id: invitationId, message: 'Invitation created successfully' });
+		}
 
-		res.json({ id: invitationId, message: 'Invitation created successfully' });
+		// If the invitation exists, update it with the new details
+		await db('invitations').where({ id: id }).update({ title: title, description: description, deleted_at: deleted_at });
+
+		res.status(200).json({ message: 'Invitation updated successfully' });
 	} catch (error) {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.errors[0] });
@@ -113,7 +119,22 @@ router.post('/accept', async (req, res) => {
 			deleted_at: new Date(),
 		});
 
-		res.json({ message: 'Invitation accepted and user added to team successfully' });
+		res.status(200).json({ message: 'Invitation accepted and user added to team successfully' });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ status: 500, error: 'Internal Server Error' });
+	}
+});
+router.post('/decline', async (req, res) => {
+	try {
+		const { id, user_id, team_id, deleted_at } = req.body;
+
+
+		await db('invitations').where({ id: id }).update({
+			deleted_at: new Date(),
+		});
+
+		res.status(200).json({ message: 'Invitation declined' });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ status: 500, error: 'Internal Server Error' });

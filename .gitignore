@@ -4,4 +4,3 @@ npm-debug.log
 test.rest
 cert.json
 docker-data
-src/utils/stripe.js

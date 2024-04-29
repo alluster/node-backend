@@ -34,9 +34,11 @@ router.get('/', async (req, res) => {
 				// Set team data if found
 				if (teamData) {
 					data.team = [teamData];
+				} else {
+					// If team data is not found, remove team_id from user
+					data.team_id = null;
 				}
 			}
-
 			// Fetch user invitations matching the user's email
 			const userInvitations = await db('invitations')
 				.join('team', 'invitations.team_id', '=', 'team.id')

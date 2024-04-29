@@ -31,19 +31,31 @@ export const isLoggedIn = (req, res, next) => {
 
 export const validateTeamAssociation = async (req, res, next) => {
 	try {
-		let user_id, team_id;
+		let user_id;
+		let team_id;
+
 		if (req.method === 'GET') {
-			// For GET requests, access parameters from req.query
+			// For GET requests, access user_id from req.query
 			user_id = req.query.user_id;
-			team_id = req.query.team_id;
 		} else if (req.method === 'POST') {
-			// For POST requests, access parameters from req.body
+			// For POST requests, access user_id from req.body
 			user_id = req.body.user_id;
-			team_id = req.body.team_id;
 		} else {
 			// Handle other request methods if needed
 			return res.status(405).json({ error: 'Method Not Allowed' });
 		}
+
+		// Retrieve team_id from the user table
+		const user = await db('user')
+			.where({ id: user_id })
+			.first();
+
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		// Assign the team_id from the user data
+		team_id = user.team_id;
 
 		const teamUser = await db('team_users')
 			.where({ user_id: user_id, team_id: team_id })

@@ -9,6 +9,7 @@ const db = knex(config.development);
 
 router.get('/', async (req, res) => {
 	try {
+		let data;
 		const { id, user_id } = req.query;
 
 		if (id) {
@@ -74,7 +75,7 @@ router.post('/', async (req, res) => {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
-			res.json({ insertedIds, message: 'Team record created successfully' });
+			res.status(200).json({ status: 200, insertedIds, message: 'Team record created successfully' });
 		}
 	} catch (error) {
 		console.error(error);
