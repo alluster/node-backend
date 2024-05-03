@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
 		data = [{
 			message: message
 		}]
-		res.json(data);
+		res.status(200).json(data);
 
 	} catch (error) {
 		data = [{
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 		}]
 		console.error(error);
 		res.status(500).json(error);
-		res.json(data)
+		res.json('The AI could not handle the amount of data.')
 	}
 });
 

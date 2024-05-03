@@ -51,7 +51,6 @@ router.get('/', async (req, res) => {
 				});
 
 				data = await Promise.all(promises);
-				console.log('data from google', data)
 			} catch (err) {
 				console.log(err);
 			}

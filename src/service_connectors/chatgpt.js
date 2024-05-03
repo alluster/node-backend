@@ -8,7 +8,6 @@ const openai = new OpenAI({
 
 export const ChatGPT = async ({ prompt }) => {
 	try {
-		console.log(prompt)
 		const completion = await openai.chat.completions.create({
 			model: "gpt-4",
 			messages: [{ role: 'user', content: `${prompt}` }],
@@ -16,9 +15,11 @@ export const ChatGPT = async ({ prompt }) => {
 		});
 		if (completion) {
 			return completion.choices[0].message.content
+		} else {
+			return 'A problem was encountered'
 		}
 
 	}
-	catch (err) { console.log(err) }
+	catch (err) { return 'A problem was encountered', console.log(err) }
 
 }
