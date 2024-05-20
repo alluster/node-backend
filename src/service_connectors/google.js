@@ -10,26 +10,67 @@ export const GoogleSheet = async ({ spreadsheetId, sheetId }) => {
 
 	await doc.useServiceAccountAuth({
 		client_email: ParsedCert.client_email,
-		private_key: ParsedCert.private_key,
+		private_key: ParsedCert.private_key.replace(/\\n/g, '\n'), // Replace newline characters
 	});
 
 	await doc.loadInfo(); // loads document properties and worksheets
-	const sheet = doc.sheetsById[sheetId]; // or use doc.sheetsById[id]
+	const sheet = doc.sheetsById[sheetId];
 	await sheet.loadCells();
 
 	// Extract cell values into JSON format
 	const jsonData = [];
-	for (let rowIndex = 0; rowIndex < sheet.rowCount; rowIndex++) {
-		const row = {};
-		for (let colIndex = 0; colIndex < sheet.columnCount; colIndex++) {
-			const columnName = String.fromCharCode(65 + colIndex); // Convert 0-based index to uppercase alphabet (A, B, C, ...)
-			const cell = sheet.getCell(rowIndex, colIndex);
-			row[columnName] = cell.value;
+	const headerRow = {};
+	const columnPresence = new Array(sheet.columnCount).fill(false);
+
+	for (let colIndex = 0; colIndex < sheet.columnCount; colIndex++) {
+		const cell = sheet.getCell(0, colIndex); // Assuming header is in the first row
+		if (cell.value !== null && cell.value !== '') {
+			const columnName = cell.value.toString().trim();
+			headerRow[colIndex] = columnName;
+			columnPresence[colIndex] = true;
 		}
-		jsonData.push(row);
 	}
+	jsonData.push(headerRow);
+
+	for (let rowIndex = 1; rowIndex < sheet.rowCount; rowIndex++) { // Start from the second row assuming the first row is header
+		const row = {};
+		let isEmptyRow = true;
+
+		for (let colIndex = 0; colIndex < sheet.columnCount; colIndex++) {
+			if (columnPresence[colIndex]) {
+				const cell = sheet.getCell(rowIndex, colIndex);
+				if (cell.value !== null && cell.value !== '') {
+					const columnName = headerRow[colIndex];
+					row[columnName] = cell.value;
+					isEmptyRow = false;
+				}
+			}
+		}
+		if (!isEmptyRow) {
+			jsonData.push(row);
+		}
+	}
+
+	// Remove columns that have no data
+	const filteredHeaderRow = {};
+	Object.keys(headerRow).forEach((colIndex) => {
+		const columnName = headerRow[colIndex];
+		if (jsonData.some(row => row.hasOwnProperty(columnName))) {
+			filteredHeaderRow[columnName] = headerRow[colIndex];
+		}
+	});
+
+	// Replace the first element in jsonData with the filtered header row
+	jsonData[0] = filteredHeaderRow;
+
+	// Remove the header row keys to keep the output minimal
+	jsonData.shift();
+
 	return jsonData;
-}
+};
+
+
+
 
 export const GoogleSheetDataPoint = async ({ spreadsheetId, sheetId, cell }) => {
 	const doc = new GoogleSpreadsheet(`${spreadsheetId}`);

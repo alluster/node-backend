@@ -8,6 +8,7 @@ import api from './src/api/index.js';
 import { message } from './src/constants/apiMessage.js';
 import cors from 'cors';
 import { validateUser } from './src/api/auth/auth.middlewares.js';
+import bodyParser from 'body-parser';
 
 
 const app = express();
@@ -16,6 +17,8 @@ app.use(morgan('tiny'));
 app.use(express.json())
 app.use(cors());
 app.use(validateUser)
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.get('/', (req, res) => {
 	res.json({ message: message })

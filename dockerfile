@@ -1,21 +1,20 @@
+# Use the official Node.js image with the alpine variant for a smaller image size
 FROM node:18-alpine
 
-#crete app directory
+# Create and set the working directory
 WORKDIR /app
 
-#Install app depencies 
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-#npm install
+# Install app dependencies
 RUN npm install
 
-#bundle app source
+# Copy the rest of the application source code to the working directory
 COPY . .
 
+# Expose port 3000 to the outside world
 EXPOSE 3000
 
-VOLUME [ "/app/node_modules" ]
-
-CMD [ "npm", "start"]
-
-
+# Define the command to run the application
+CMD ["npm", "start"]

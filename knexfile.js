@@ -4,7 +4,7 @@ dotenv.config();
 export const config = {
 	development: {
 		client: 'pg',
-		debug: true,
+		debug: false,
 		connection: {
 			host: 'db',
 			database: process.env.POSTGRES_DB,
