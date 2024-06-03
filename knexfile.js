@@ -26,6 +26,7 @@ export const config = {
 	production: {
 		client: 'pg',
 		debug: false,
+		connectionString: process.env.DATABASE_URL,
 		connection: {
 			host: process.env.POSTGRES_HOST,
 			database: process.env.POSTGRES_DB,
