@@ -11,6 +11,7 @@ export const config = {
 			user: process.env.POSTGRES_USER,
 			password: process.env.POSTGRES_PASSWORD,
 		},
+
 		pool: {
 			min: 2,
 			max: 10
@@ -30,6 +31,9 @@ export const config = {
 			database: process.env.POSTGRES_DB,
 			user: process.env.POSTGRES_USER,
 			password: process.env.POSTGRES_PASSWORD,
+		},
+		ssl: {
+			rejectUnauthorized: false
 		},
 		pool: {
 			min: 2,
