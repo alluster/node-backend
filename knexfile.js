@@ -25,28 +25,17 @@ export const config = {
 	},
 	production: {
 		client: 'pg',
-		debug: false,
-		connectionString: process.env.DATABASE_URL,
 		connection: {
-			host: process.env.POSTGRES_HOST,
-			database: process.env.POSTGRES_DB,
-			user: process.env.POSTGRES_USER,
-			password: process.env.POSTGRES_PASSWORD,
-		},
-		ssl: {
-			rejectUnauthorized: false
-		},
-		pool: {
-			min: 2,
-			max: 10
+			connectionString: process.env.DATABASE_URL,
+			ssl: { rejectUnauthorized: false },
 		},
 		migrations: {
-			directory: './db/migrations',
+			directory: __dirname + '/db/migrations',
 		},
 		seeds: {
-			directory: './db/seeds',
+			directory: __dirname + '/db/seeds',
 		},
-	}
+	},
 };
 
 export default config
