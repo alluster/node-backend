@@ -1,4 +1,4 @@
-import tableNames from '../../src/importants/tableNames')
+import tableNames from '../../src/constants/tableNames';
 
 
 /**
