@@ -1,4 +1,4 @@
-import tableNames from '../../src/constants/tableNames.js';
+const tableNames = require('../../src/constants/tableNames.js');
 
 function references(table, tableName) {
 	table.integer(`${tableName}_id`).unsigned().references('id').inTable(tableName).onDelete('cascade');
