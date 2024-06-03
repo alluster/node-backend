@@ -1,4 +1,4 @@
-const tableNames from '../../src/constants/tableNames')
+import tableNames from '../../src/constants/tableNames';
 
 function addDefaultColumns(table) {
 	table.timestamps(false, true);
