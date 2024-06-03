@@ -1,4 +1,4 @@
-const tableNames = require('../../src/constants/tableNames.js');
+const tableNames = require('../../src/constants/tableNames.cjs');
 
 function references(table, tableName) {
 	table.integer(`${tableName}_id`).unsigned().references('id').inTable(tableName).onDelete('cascade');

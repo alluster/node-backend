@@ -1,4 +1,4 @@
-const tableNames = require('../../src/constants/tableNames.js');
+const tableNames = require('../../src/constants/tableNames.cjs');
 
 function addDefaultColumns(table) {
 	table.timestamps(false, true);
