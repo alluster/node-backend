@@ -4,9 +4,9 @@ dotenv.config();
 export const config = {
 	development: {
 		client: 'pg',
-		debug: false,
+		debug: true,
 		connection: {
-			host: process.env.POSTGRES_HOST,
+			host: 'db',
 			database: process.env.POSTGRES_DB,
 			user: process.env.POSTGRES_USER,
 			password: process.env.POSTGRES_PASSWORD,
