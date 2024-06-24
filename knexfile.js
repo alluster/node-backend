@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
+
 	development: {
 		client: 'pg',
 		debug: true,

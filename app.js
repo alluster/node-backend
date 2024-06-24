@@ -19,10 +19,11 @@ app.use(cors());
 app.use(validateUser)
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+console.log('database_url: ', process.env.DATABASE_URL),
 
-app.get('/', (req, res) => {
-	res.json({ message: message })
-})
+	app.get('/', (req, res) => {
+		res.json({ message: message })
+	})
 
 app.use('/api/v1', api);
 
