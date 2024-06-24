@@ -120,7 +120,7 @@ router.post('/signin', async (req, res) => {
 			token: token
 		}]);
 	} catch (error) {
-		res.status(400).json([{ message: 'Signin failed' }]);
+		res.status(400).json([{ error, message: 'Signin failed' }]);
 	}
 });
 
