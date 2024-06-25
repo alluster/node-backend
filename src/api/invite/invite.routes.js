@@ -1,11 +1,8 @@
 import express from 'express';
-
-import knex from 'knex';
-import { config } from '../../../knexfile.js';
+import db from '../../../db/knex.js';
 import yup from 'yup';
 
 const router = express.Router();
-const db = knex(config.development);
 
 const schema = yup.object().shape({
 	email: yup.string().trim().email()

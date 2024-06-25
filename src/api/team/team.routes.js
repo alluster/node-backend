@@ -1,11 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
-
+import db from '../../../db/knex.js';
 const router = express.Router();
-import knex from 'knex';
-import { config } from '../../../knexfile.js';
-const db = knex(config.development);
-
 
 router.get('/', async (req, res) => {
 	try {

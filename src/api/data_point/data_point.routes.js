@@ -1,9 +1,6 @@
 import express from 'express';
-import knex from 'knex';
-import { config } from '../../../knexfile.js';
+import db from '../../../db/knex.js';
 import { GoogleAnalytics, GoogleSheetDataPoint } from '../../service_connectors/google.js';
-
-const db = knex(config.development);
 const router = express.Router();
 
 

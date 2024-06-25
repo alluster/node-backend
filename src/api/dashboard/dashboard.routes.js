@@ -1,8 +1,5 @@
 import express from 'express';
-import knex from 'knex';
-import config from '../../../knexfile.js';
-
-const db = knex(config.development);
+import db from '../../../db/knex.js';
 
 const router = express.Router();
 
