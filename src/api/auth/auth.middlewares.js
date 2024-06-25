@@ -2,7 +2,7 @@ import { verify } from '../../utils/jwt.js';
 import knex from 'knex';
 import config from '../../../knexfile.js';
 
-const db = knex(config.development);
+import db from '../../../db/knex.js';
 
 export const validateUser = async (req, res, next) => {
 	const authHeader = await req.get('authorization');
