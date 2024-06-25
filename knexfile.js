@@ -27,8 +27,12 @@ export const config = {
 	production: {
 		client: 'pg',
 		connection: {
-			connectionString: process.env.DATABASE_URL + "?ssl=true",
+			connectionString: process.env.DATABASE_URL,
 			ssl: { rejectUnauthorized: false },
+		},
+		pool: {
+			min: 2,
+			max: 10
 		},
 		migrations: {
 			directory: './db/migrations',
