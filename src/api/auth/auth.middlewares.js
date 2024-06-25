@@ -1,7 +1,4 @@
 import { verify } from '../../utils/jwt.js';
-import knex from 'knex';
-import config from '../../../knexfile.js';
-
 import db from '../../../db/knex.js';
 
 export const validateUser = async (req, res, next) => {
