@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-console.log('environment in knexfile:', process.env.ENVIRONMENT)
 export const config = {
 
 	development: {
