@@ -7,5 +7,11 @@ const environment = process.env.ENVIRONMENT || 'development';
 const knexConfig = config[environment];
 
 const db = knex(knexConfig);
-
+db.raw('SELECT 1')
+	.then(() => {
+		console.log('Database connection successful');
+	})
+	.catch(err => {
+		console.error('Database connection failed:', err);
+	});
 export default db;
