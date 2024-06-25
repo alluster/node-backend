@@ -20,6 +20,8 @@ app.use(validateUser)
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 console.log('database_url: ', process.env.DATABASE_URL),
+	console.log('environment: ', process.env.ENVIRONMENT),
+
 
 	app.get('/', (req, res) => {
 		res.json({ message: message })

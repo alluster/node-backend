@@ -4,9 +4,13 @@ dotenv.config();
 export const config = {
 	development: {
 		client: 'pg',
+		debug: true,
 		connection: {
-			connectionString: `${process.env.DATABASE_URL}`,
-			ssl: { rejectUnauthorized: false },
+			host: 'db', // Change this if your database is hosted elsewhere
+			database: process.env.POSTGRES_DB,
+			user: process.env.POSTGRES_USER,
+			password: process.env.POSTGRES_PASSWORD,
+			port: 5432 // Ensure this port matches your PostgreSQL configuration
 		},
 		pool: {
 			min: 2,
