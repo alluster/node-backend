@@ -2,20 +2,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-
 	development: {
 		client: 'pg',
 		debug: true,
 		connection: {
-			host: 'db',
+			host: 'localhost', // Change this if your database is hosted elsewhere
 			database: process.env.POSTGRES_DB,
 			user: process.env.POSTGRES_USER,
 			password: process.env.POSTGRES_PASSWORD,
+			port: 5432 // Ensure this port matches your PostgreSQL configuration
 		},
-
 		pool: {
 			min: 2,
-			max: 10
+			max: 10,
 		},
 		migrations: {
 			directory: './db/migrations',
@@ -32,7 +31,7 @@ export const config = {
 		},
 		pool: {
 			min: 2,
-			max: 10
+			max: 10,
 		},
 		migrations: {
 			directory: './db/migrations',
@@ -43,4 +42,4 @@ export const config = {
 	},
 };
 
-export default config
+export default config;
