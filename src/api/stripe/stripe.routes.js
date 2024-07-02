@@ -57,6 +57,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 					.update({
 						stripe_id: customerId,
 						stripe_subscription: true,
+						stripe_subscription_id: priceId,
 						updated_at: new Date()
 					});
 
