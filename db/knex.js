@@ -5,7 +5,6 @@ dotenv.config();
 
 const environment = process.env.ENVIRONMENT || 'development';
 const knexConfig = config[environment];
-console.log('environment in knex.js:', process.env.ENVIRONMENT)
 
 const db = knex(knexConfig);
 db.raw('SELECT 1')

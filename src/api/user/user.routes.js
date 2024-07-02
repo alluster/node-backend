@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import db from '../../../db/knex.js';
+import { GetStripeCustomer } from '../../service_connectors/stripe.js';
 
 router.get('/', async (req, res) => {
 	try {
@@ -48,6 +49,8 @@ router.get('/', async (req, res) => {
 			// Add invitations array to user object
 			data.invitations = userInvitations || [];
 
+			const stripeProfile = await GetStripeCustomer({ id: data.stripe_id })
+			data.stripe_profile = stripeProfile || []
 			// Send the modified user object with team data and invitations
 			return res.json([data]);
 		} else {

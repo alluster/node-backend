@@ -11,7 +11,6 @@ import { isLoggedIn, validateTeamAssociation } from '../api/auth/auth.middleware
 import llama2 from './llama2/llama2.routes.js';
 import invite from './invite/invite.routes.js';
 import chatgpt from './chatgpt/chatgpt.routes.js';
-import stripe from './stripe/stripe.routes.js';
 
 const router = express.Router();
 
@@ -38,7 +37,6 @@ router.use('/data_provider', isLoggedIn, data_provider);
 router.use('/invite', isLoggedIn, invite);
 router.use('/team', isLoggedIn, team);
 router.use('/user', isLoggedIn, user);
-router.use('/stripe', stripe);
 
 
 export default router;

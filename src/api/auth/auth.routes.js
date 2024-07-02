@@ -6,6 +6,7 @@ import yup from 'yup';
 import bcrypt from 'bcrypt';
 import { sign } from '../../utils/jwt.js';
 import { v4 as uuidv4 } from 'uuid'; // Import the UUID module
+import { CreateStripeCustomer } from '../../service_connectors/stripe.js';
 
 const schema = yup.object().shape({
 	first_name: yup.string().trim().min(2).required(),
@@ -48,34 +49,52 @@ router.get('/', async (req, res) => {
 router.post('/signup', async (req, res) => {
 	const { first_name, last_name, email, password } = req.body;
 	try {
-		const hashedPassword = await bcrypt.hash(password, 12)
+		const hashedPassword = await bcrypt.hash(password, 12);
 		const generatedUserId = uuidv4(); // Generate a UUID for the user
+
 		const existingUser = await db('user').where({ email }).first();
 		if (existingUser) {
 			throw new Error('Email is already in use');
 		}
 
-		const validUser = await schema.validate({ first_name, last_name, email, password }, {
-			abortEarly: false
-		});
-		const newUser = await db('user').insert({ uniq_user_id: generatedUserId, first_name, last_name, email, password: hashedPassword }).returning('id');
-		const createdUser = await db('user').where({ id: newUser[0].id }).first();
+		// Insert the new user into the database
+		const newUser = await db('user')
+			.insert({ uniq_user_id: generatedUserId, first_name, last_name, email, password: hashedPassword })
+			.returning('id');
 
-		delete createdUser.password
+		const userId = newUser[0].id;
+
+		// Create a Stripe customer
+		const stripeCustomer = await CreateStripeCustomer({ email });
+
+		// Update the user record with the Stripe customer ID
+		await db('user').where({ id: userId }).update({ stripe_id: stripeCustomer.id });
+
+		// Fetch the updated user record
+		const createdUserWithStripe = await db('user').where({ id: userId }).first();
+
+		delete createdUserWithStripe.password; // Remove the password field
+
 		const payload = {
-			id: newUser[0].id,
+			id: userId,
 			first_name,
 			last_name,
 			email
-		}
-		const token = await sign(payload)
-		res.json({
-			message: 'User created',
-			user: createdUser,
+		};
+
+		const token = sign(payload);
+
+		return res.json({
+			message: 'success',
+			user: createdUserWithStripe,
 			token: token
 		});
 	} catch (error) {
-		res.status(400).json({ error: error.message });
+		if (error.name === 'ValidationError') {
+			// Send validation error details
+			return res.status(400).json({ error: error.errors });
+		}
+		return res.status(400).json({ error: error.message });
 	}
 });
 
