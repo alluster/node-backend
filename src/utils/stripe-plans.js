@@ -6,12 +6,12 @@ export const stripePricingPlans = [
 		priceDescription: 'Best option for personal use & for your next project.',
 		link:
 			process.env.ENVIRONMENT === 'development'
-				? 'https://buy.stripe.com/test_3cs2aC2z3crg4HScMM'
-				: 'https://buy.stripe.com/live_xxx',
+				? 'https://buy.stripe.com/test_9AQaH8ehL4YOdeo5kn'
+				: 'https://buy.stripe.com/fZecQF0XVdvddTG9AE',
 		priceId:
 			process.env.ENVIRONMENT === 'development'
-				? 'price_1P9RCzDbLsTEfXvIXhAb9lxL'
-				: 'price_live_xxx',
+				? 'price_1PY6XzDbLsTEfXvIZOE2SqFl'
+				: 'price_1PY6Y6DbLsTEfXvI00kIviWr',
 		price: 9.99,
 		duration: '/year',
 		pricePerks: [
@@ -30,12 +30,12 @@ export const stripePricingPlans = [
 		priceDescription: 'Best option for a small team or organisation.',
 		link:
 			process.env.ENVIRONMENT === 'development'
-				? 'https://buy.stripe.com/test_3cs2aC2z3crg4HScMM'
-				: 'https://buy.stripe.com/live_xxx',
+				? 'https://buy.stripe.com/test_8wM3eG3D73UKgqAaEG'
+				: 'https://buy.stripe.com/8wM8ApeOLaj13f29AD',
 		priceId:
 			process.env.ENVIRONMENT === 'development'
-				? 'price_1P9RCzDbLsTEfXvIXhAb9lxL'
-				: 'price_live_xxx',
+				? 'price_1PY6YSDbLsTEfXvIWuEHapK5'
+				: 'price_1PY6YZDbLsTEfXvIrbWus0bf',
 		price: 39.99,
 		duration: '/year',
 		pricePerks: [
@@ -54,12 +54,12 @@ export const stripePricingPlans = [
 		priceDescription: 'Best option for a small team or organisation.',
 		link:
 			process.env.ENVIRONMENT === 'development'
-				? 'https://buy.stripe.com/test_3cs2aC2z3crg4HScMM'
-				: 'https://buy.stripe.com/live_xxx',
+				? 'https://buy.stripe.com/test_3cs6qS2z30IygqAeUV'
+				: 'https://buy.stripe.com/https://buy.stripe.com/14keYNcGD2Qz02QcMO',
 		priceId:
 			process.env.ENVIRONMENT === 'development'
-				? 'price_1P9RCzDbLsTEfXvIXhAb9lxL'
-				: 'price_live_xxx',
+				? 'price_1PY6ZODbLsTEfXvIk5jobSe4'
+				: 'price_1PY6ZTDbLsTEfXvITVqFEgrw',
 		price: 1199.99,
 		duration: '/year',
 		pricePerks: [
