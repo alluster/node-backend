@@ -7,8 +7,6 @@ const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_KEY);
 const endpointSecret = process.env.STRIPE_ENDPOINT_SIGNIN_SECRET;
 
-// Middleware to capture raw body for Stripe signature verification
-
 
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
 
@@ -57,7 +55,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 					.update({
 						stripe_id: customerId,
 						stripe_subscription: true,
-						stripe_subscription_id: priceId,
+						stripe_price_id: priceId,
 						updated_at: new Date()
 					});
 
