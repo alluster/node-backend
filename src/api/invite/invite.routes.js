@@ -68,31 +68,30 @@ router.post('/', async (req, res) => {
 		// Validate request body using Yup schema
 		await schema.validate({ email });
 
-		// Check if the user exists
-		const userExists = await db('user').where({ uniq_user_id }).first();
-		if (!userExists) {
-			return res.status(404).json({ error: 'User not found' });
-		}
-
-		// Check if the team exists
-		const teamExists = await db('team').where({ uniq_team_id }).first();
+		const teamExists = await db('team').where({ uniq_team_id: uniq_team_id }).first();
 		if (!teamExists) {
 			return res.status(404).json({ error: 'Team not found' });
 		}
+		const userExists = await db('user').where({ uniq_user_id: uniq_user_id }).first();
+		if (!userExists) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+		const existingInvitation = await db('invitations')
+			.where({ team_id: teamExists.id, email: email })
+			.first();
 
-		// Check if the invitation already exists
-		const existingInvitation = await db('invitations').where({ team_id: teamExists.id, user_id: userExists.id }).first();
-		if (!existingInvitation) {
+		if (existingInvitation) {
+			// If the invitation exists, update it with the new details
+
+			return res.status(202).json({ message: 'User with this email has already been invited to this team.' });
+		} else {
 			// If the invitation does not exist, create a new one
-			const insertedIds = await db('invitations').insert({ email: email, team_id: teamExists.id, user_id: userExists.id, title: title, description: description }).returning('id');
+			const insertedIds = await db('invitations')
+				.insert({ email: email, team_id: teamExists.id, user_id: userExists.id, title: title, description: description })
+				.returning('id');
 			const invitationId = insertedIds[0];
 			return res.status(200).json({ id: invitationId, message: 'Invitation created successfully' });
 		}
-
-		// If the invitation exists, update it with the new details
-		await db('invitations').where({ id: id }).update({ title: title, description: description, deleted_at: deleted_at });
-
-		res.status(200).json({ message: 'Invitation updated successfully' });
 	} catch (error) {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.errors[0] });

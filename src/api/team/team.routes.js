@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
 			res.json({ message: 'Team record updated successfully' });
 		} else {
 			const generated_uniq_id = uuidv4();
-			const insertedIds = await db('team').insert({ uniq_team_id: generated_uniq_id, title: title, description: description }).returning('id');
+			const insertedIds = await db('team').insert({ creator: uniq_user_id, uniq_team_id: generated_uniq_id, title: title, description: description }).returning('id');
 			const teamId = insertedIds[0].id;
 			const userExists = await db('user').where({ uniq_user_id: uniq_user_id }).first();
 			if (userExists) {

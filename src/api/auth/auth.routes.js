@@ -56,7 +56,9 @@ router.post('/signup', async (req, res) => {
 		if (existingUser) {
 			throw new Error('Email is already in use');
 		}
-
+		const validUser = await schema.validate({ first_name, last_name, email, password }, {
+			abortEarly: false
+		});
 		// Insert the new user into the database
 		const newUser = await db('user')
 			.insert({ uniq_user_id: generatedUserId, first_name, last_name, email, password: hashedPassword })
@@ -82,7 +84,7 @@ router.post('/signup', async (req, res) => {
 			email
 		};
 
-		const token = sign(payload);
+		const token = await sign(payload);
 
 		return res.json({
 			message: 'success',

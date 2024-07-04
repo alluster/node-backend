@@ -39,6 +39,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 				);
 
 				const customerId = session.customer;
+				const uniqTeamId = session.client_reference_id;
 				const customer = await stripe.customers.retrieve(customerId);
 				const priceId = session.line_items.data[0].price.id;
 				const plan = stripePricingPlans.find((item) => item.priceId === priceId);
@@ -58,9 +59,22 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 						stripe_price_id: priceId,
 						updated_at: new Date()
 					});
+				const updateTeam = await db('team')
+					.where({ uniq_team_id: uniqTeamId })
+					.update({
+						stripe_customer_id: customerId,
+						stripe_subscription: true,
+						stripe_price_id: priceId,
+						updated_at: new Date()
+					});
 
 				if (updatedUser === 0) {
 					console.error('User record not found for email:', customer.email);
+					return res.status(404).json({ error: 'User record not found' });
+				}
+
+				else if (updateTeam === 0) {
+					console.error('Team record not found for uniq_team_id:', customer.client_reference_id);
 					return res.status(404).json({ error: 'User record not found' });
 				}
 				// todo: send email to user
