@@ -78,4 +78,37 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
+router.get('/team_users', async (req, res) => {
+	try {
+		const { id } = req.query;
+
+		if (!id) {
+			// If team ID is not provided, return an error
+			return res.status(400).json({ error: 'team_id is required' });
+		}
+
+		// Get the user IDs associated with the specified team ID
+		const teamUsers = await db('team_users')
+			.where({ team_id: id })
+			.whereNull('deleted_at')
+			.select('user_id');
+
+		if (!teamUsers.length) {
+			return res.status(404).json({ error: 'No users found for this team' });
+		}
+
+		// Extract user IDs from the teamUsers array
+		const userIds = teamUsers.map(user => user.user_id);
+
+		// Fetch user details from the users table using the retrieved user IDs
+		const users = await db('user')
+			.whereIn('id', userIds)
+			.select('id', 'first_name', 'last_name', 'email');
+
+		return res.json(users);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
+});
 export default router;
