@@ -49,8 +49,16 @@ router.get('/', async (req, res) => {
 
 
 router.post('/signup', async (req, res) => {
-	const { first_name, last_name, email, password } = req.body;
+	const { first_name, last_name, email, password, recaptcha_token } = req.body;
 	try {
+		const recaptchaResponse = await axios.post(
+			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptcha_token}`
+		);
+
+		// Check response status and send back to the client-side
+		if (!recaptchaResponse.data.success) {
+			return res.status(400).json({ error: "reCAPTCHA verification failed" });
+		}
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const generatedUserId = uuidv4(); // Generate a UUID for the user
 
