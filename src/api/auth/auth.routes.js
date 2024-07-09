@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt';
 import { sign } from '../../utils/jwt.js';
 import { v4 as uuidv4 } from 'uuid'; // Import the UUID module
 import { CreateStripeCustomer } from '../../service_connectors/stripe.js';
+import axios from 'axios';
+
 
 const schema = yup.object().shape({
 	first_name: yup.string().trim().min(2).required(),
