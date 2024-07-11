@@ -59,7 +59,7 @@ router.post('/signup', async (req, res) => {
 
 		// Check response status and send back to the client-side
 		if (!recaptchaResponse.data.success) {
-			return res.status(400).json({ error: "reCAPTCHA verification failed" });
+			return res.status(403).json({ error: "reCAPTCHA verification failed" });
 		}
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const generatedUserId = uuidv4(); // Generate a UUID for the user
@@ -97,7 +97,7 @@ router.post('/signup', async (req, res) => {
 		await db('user').where({ id: userId }).update({ stripe_id: stripeCustomer.id, team_id: teamId });
 
 		// Associate the user with the newly created team
-		await db('team_users').insert({ user_id: userId, team_id: teamId });
+		await db('team_users').insert({ user_id: userId, team_id: teamId, uniq_user_id: uniqUserId, uniq_team_id: uniqTeamId });
 		const newDashboard = await db('dashboard').insert({ title: `${teamName} Dashboard`, description: 'This is your teams first dashboard', uniq_team_id: uniqTeamId })
 			.returning('id');
 		const dashboardId = newDashboard[0].id;
@@ -134,9 +134,9 @@ router.post('/signup', async (req, res) => {
 	} catch (error) {
 		if (error.name === 'ValidationError') {
 			// Send validation error details
-			return res.status(400).json({ error: error.errors });
+			return res.status(403).json({ error: error.errors });
 		}
-		return res.status(400).json({ error: error.message });
+		return res.status(403).json({ error: error.message });
 	}
 });
 
@@ -181,7 +181,7 @@ router.post('/signin', async (req, res) => {
 			token: token
 		}]);
 	} catch (error) {
-		res.status(400).json([{ error, message: 'Signin failed' }]);
+		res.status(403).json([{ error, message: 'Signin failed' }]);
 	}
 });
 

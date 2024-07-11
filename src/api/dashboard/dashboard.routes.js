@@ -7,6 +7,7 @@ router.get('/', async (req, res) => {
 	try {
 		let data;
 		const { id, uniq_team_id } = req.query;
+		console.log('uniq_team_id:', uniq_team_id)
 		if (id) {
 			data = await db('dashboard')
 				.where({ id: id, uniq_team_id: uniq_team_id })

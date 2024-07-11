@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
 			res.status(200).json(invitations);
 		} else {
 			// If neither invitation ID nor email is provided, return an error
-			return res.status(400).json({ error: 'Invitation ID or email is required' });
+			return res.status(403).json({ error: 'Invitation ID or email is required' });
 		}
 	} catch (error) {
 		console.error(error);
@@ -94,7 +94,7 @@ router.post('/', async (req, res) => {
 		}
 	} catch (error) {
 		if (error.name === 'ValidationError') {
-			return res.status(400).json({ error: error.errors[0] });
+			return res.status(403).json({ error: error.errors[0] });
 		}
 		console.error(error);
 		res.status(500).json({ status: 500, error: 'Internal Server Error' });
@@ -103,13 +103,13 @@ router.post('/', async (req, res) => {
 
 router.post('/accept', async (req, res) => {
 	try {
-		const { id, user_id, team_id } = req.body;
+		const { id, user_id, team_id, uniq_team_id } = req.body;
 
 		const existingTeamUser = await db('team_users')
-			.where({ user_id: user_id, team_id: team_id }).first();
+			.where({ user_id: user_id, team_id: team_id, uniq_team_id: uniq_team_id }).first();
 
 		if (!existingTeamUser) {
-			await db('team_users').insert({ user_id, team_id });
+			await db('team_users').insert({ user_id, team_id, uniq_team_id });
 		}
 		await db('invitations').where({ id: id }).update({
 			deleted_at: new Date(),

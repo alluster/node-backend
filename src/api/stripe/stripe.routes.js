@@ -22,7 +22,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 			console.log('⚠️  Webhook signature verification successful.');
 		} catch (err) {
 			console.log(`⚠️  Webhook signature verification failed.`, err.message);
-			return res.sendStatus(400);
+			return res.sendStatus(403);
 		}
 	} else {
 		event = req.body;

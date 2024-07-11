@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
 			// Send the modified user object with team data and invitations
 			return res.json([data]);
 		} else {
-			return res.status(400).json({ error: 'Missing user ID' });
+			return res.status(403).json({ error: 'Missing user ID' });
 		}
 	} catch (error) {
 		console.error(error);
@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
 			res.status(200).json({ status: 'success', message: 'User record updated successfully', user: updatedUser });
 
 		} else {
-			res.status(400).json({ error: 'User ID required' });
+			res.status(403).json({ error: 'User ID required' });
 		}
 	} catch (error) {
 		console.error(error);
