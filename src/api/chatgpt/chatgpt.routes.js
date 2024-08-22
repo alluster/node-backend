@@ -6,7 +6,7 @@ import { ChatGPT } from '../../service_connectors/chatgpt.js';
 
 const router = express.Router();
 
-router.post('/', setConnectionTimeout('12h'), async (req, res) => {
+router.post('/', async (req, res) => {
 	const { prompt, uniq_team_id } = req.body;  // Assume team_id is passed in the request body
 	try {
 		// Check if the team has a valid subscription
