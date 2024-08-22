@@ -9,7 +9,8 @@
 		"migrate": "DEBUG=hpdatabase knex migrate:latest",
 		"rollback": "DEBUG=hpdatabase knex migrate:rollback",
 		"seed": "DEBUG=hpdatabase knex seed:run",
-		"heroku-postinstall": "node index.js && knex migrate:latest"
+		"heroku-postinstall": "node index.js && knex migrate:latest",
+		"test": "jest"
 	},
 	"author": "",
 	"license": "ISC",

@@ -10,4 +10,4 @@ describe('GET /api/v1', () => {
 		expect(response.body.message)
 			.toEqual('This is the v1 of this API');
 	});
-})
+})    
