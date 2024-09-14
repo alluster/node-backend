@@ -1,17 +1,61 @@
-# Docker Node.js + PostgreSQL Backend with Adminer database viewer
+# Node.js backend API
 
-1. Create .env file and add variables according to .env.example
+## API built for users to:
 
-2. Run the docker-composer in your project root terminal:
+-   Authenticate
+-   Create teams
+-   Invite users
+-   Integrate to their Google Sheets
+-   Import data from Google Sheets and ask Open AI Chat GPT for data analysis
+-   Purchase subscription using Stripe
 
-$ docker-compose up
+## Backend API's serving a large business logic bundle:
 
-Adminer database view should be available on localhost:8090
+-   Authentication and authorization using JWT, user invitations
+-   PostgreSQL database: organisations, teams, users, dashboards & data points
+-   Stripe purchase logic integration to API and database
+-   Open AI chat GPT Integration for data analysis
+-   Google Cloud Integration for fetching Google Sheets using a service account
 
-3. Migrate database:
+### Made with:
 
-$ npm run migrate
+-   Node.js
+-   Knex.js
+-   PostgreSQL
+-   Docker
 
-4. Roll back database to clear changes:
+### After downloading, execute following steps to develop:
 
-$ npm run rollback
+2.  **Migrate Database**
+
+    Navigate into site’s directory and migrate with Knex.js:
+
+    ```shell
+    knex:migrate latest
+    ```
+
+1.  **Run unit tests**
+
+    Navigate into site’s directory and run tests:
+
+    ```shell
+    npm run test
+    ```
+
+1.  **Start command**
+
+    Navigate into site’s directory and start it up:
+
+    ```shell
+    docker-compose up
+    ```
+
+1.  **In your browser navigate to**
+
+    ```shell
+    localhost:8090
+    ```
+
+    **VS Code Extension suggestions for development**
+
+-   Rest Client
