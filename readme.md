@@ -1,34 +1,35 @@
-# Node.js backend API
+# Node.js Backend API
 
-## API built for users to:
+## Overview
 
--   Authenticate
--   Create teams
--   Invite users
--   Integrate to their Google Sheets
--   Import data from Google Sheets and ask Open AI Chat GPT for data analysis
--   Purchase subscription using Stripe
+## This API allows users to:
 
-## Backend API's serving a large business logic bundle:
+-   Authenticate and manage teams: Users can create teams and invite others.
+-   Integrate Google Sheets: Users can fetch data from Google Sheets.
+-   Analyze data with OpenAI GPT: Import data from Google Sheets and analyze it using OpenAI's Chat GPT.
+-   Subscription management: Users can purchase subscriptions using Stripe.
 
--   Authentication and authorization using JWT, user invitations
--   PostgreSQL database: organisations, teams, users, dashboards & data points
--   Stripe purchase logic integration to API and database
--   Open AI chat GPT Integration for data analysis
--   Google Cloud Integration for fetching Google Sheets using a service account
+**Features**
 
-### Made with:
+-   **Authentication & Authorization**: JWT-based authentication and invitation management.
+-   **PostgreSQL**: Relational database to manage organizations, teams, users, dashboards, and data points.
+-   **Stripe** Integration: For subscription management.
+-   **Google Cloud Integration**: Fetch Google Sheets using a service account.
+-   **OpenAI GPT Integration**: Analyze data imported from Google Sheets.
+-   **Docker**: Containerized environment for development and deployment.
 
--   Node.js
--   Knex.js
--   PostgreSQL
--   Docker
+**Tech Stack**
+
+-   **Node.js**: Backend framework.
+-   **Knex.js**: SQL query builder for PostgreSQL.
+-   **PostgreSQL**: Database.
+-   **Docker**: Containerization for easy environment management.
 
 ### After downloading, execute following steps to develop:
 
 2.  **Migrate Database**
 
-    Navigate into site’s directory and migrate with Knex.js:
+    Navigate into app’s directory and migrate with Knex.js:
 
     ```shell
     knex:migrate latest
@@ -36,7 +37,7 @@
 
 1.  **Run unit tests**
 
-    Navigate into site’s directory and run tests:
+    Navigate into app’s directory and run tests:
 
     ```shell
     npm run test
@@ -44,18 +45,24 @@
 
 1.  **Start command**
 
-    Navigate into site’s directory and start it up:
+    Navigate into app’s directory and start it up:
 
     ```shell
     docker-compose up
     ```
 
-1.  **In your browser navigate to**
+1.  **Access the Database via Adminer**
 
     ```shell
     localhost:8090
     ```
 
-    **VS Code Extension suggestions for development**
+1.  **Access the API**
+
+    ```shell
+    localhost:3000
+    ```
+
+### VS Code Extension suggestions for development
 
 -   Rest Client
